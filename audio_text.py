@@ -1,5 +1,3 @@
-from os import path
-
 import speech_recognition as sr
 from pydub import AudioSegment
 

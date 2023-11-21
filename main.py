@@ -2,7 +2,7 @@ from typing import Final
 import logging
 
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, Updater, filters
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 
 from audio_text import AudioConverter
 
@@ -34,6 +34,14 @@ async def downloader(update, context):
     # Sending text from converted audio
     await context.bot.send_message(chat_id=update.effective_chat.id, text=f"{converter.recognized_text}")
 
+
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message_type: str = update.message.chat.type
+    text: str = update.message.text
+
+    print(f"User {update.message.chat.id} in {message_type}: < {text} >")
+
+
 if __name__ == '__main__':
     application = ApplicationBuilder().token(TOKEN).build()
     
@@ -43,5 +51,6 @@ if __name__ == '__main__':
 
     # Message
     application.add_handler(MessageHandler(filters.VOICE, downloader))
+    application.add_handler(MessageHandler(filters.TEXT, handle_message))
     
     application.run_polling()
